@@ -24,8 +24,23 @@ except Exception as exc:
     print(f"[tracker] previous log not loaded: {exc}")
 
 app = Flask(__name__)
+
 app.config["MAX_CONTENT_LENGTH"] = 256 * 1024
-CORS(app, resources={r"/api/*": {"origins": os.getenv("CORS_ORIGINS", "https://unified-backtester-0906.onrender.com").split(",")}})
+
+allowed_origins = [
+    "https://unified-backtester-0906.onrender.com",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173"
+]
+
+CORS(
+    app,
+    resources={r"/*": {"origins": allowed_origins}},
+    supports_credentials=True,
+    methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
+    always_send=True
+)
 
 def num(v):
     try:
