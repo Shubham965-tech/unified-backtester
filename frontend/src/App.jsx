@@ -175,12 +175,12 @@ export default function App() {
     try {
       const response = await generateAlphaIdeas({ idea: strategyPrompt, universe, start, end });
       setGeneratedIdeas(response.ideas || []); setGenerationNote(response.note || "Review each hypothesis and its limitations before running it."); setGenerationOptimization(response.optimization || null);
-      notify(`Gemini generated ${(response.ideas || []).length} validated candidate ideas.`);
+      notify(`LLM generated ${(response.ideas || []).length} validated candidate ideas.`);
     } catch (err) { setGenerationNote(err.message); notify(`Idea generation failed: ${err.message}`); }
     finally { setGeneratingIdeas(false); }
   };
   const selectGeneratedIdea = (idea) => {
-    setExpression(idea.expression); setAlphaName(idea.name || "Gemini-generated alpha"); setSelectedAlpha(null);
+    setExpression(idea.expression); setAlphaName(idea.name || "LLM-generated alpha"); setSelectedAlpha(null);
     setPage("create"); notify("Expression loaded. Review it and the backtest settings before running.");
   };
   const backtestGeneratedIdea = async (idea) => {
@@ -263,10 +263,10 @@ export default function App() {
 
       {page === "create" && <section className="page-content">
         <div className="page-title-row compact-title"><div><div className="eyebrow"><span className="eyebrow-line"/> RESEARCH EDITOR</div><h1>{alphaName || "Untitled alpha"}</h1><p className="page-subtitle">Edit your signal and configure an immutable experiment snapshot.</p></div><div className="title-actions"><span className="autosave"><span/> Draft changes</span><button className="btn btn-secondary" onClick={saveAlpha}><Check size={15}/> Save alpha</button><button className="btn btn-primary" onClick={simulate} disabled={running}>{running?<RefreshCw className="spin" size={15}/>:<Play size={15} fill="currentColor"/>}{running?"Running…":"Run backtest"}</button></div></div>
-        <Panel title="Describe your strategy — Gemini Alpha Assistant" subtitle="No expression-writing skills required. Explain the market behavior you want to capture; Gemini proposes candidates using only the engine's registered fields and operators." className="idea-assistant-panel">
+        <Panel title="Describe your strategy — LLM Alpha Assistant" subtitle="No expression-writing skills required. Explain the market behavior you want to capture; LLM proposes candidates using only the engine's registered fields and operators." className="idea-assistant-panel">
           <div className="idea-prompt-row">
             <div className="idea-prompt-input"><label htmlFor="strategy-prompt">Your strategy in plain English</label><textarea id="strategy-prompt" value={strategyPrompt} onChange={e=>setStrategyPrompt(e.target.value)} placeholder="Example: Find liquid stocks where medium-term momentum is strong but recent volatility is falling. I want a daily long/short signal, avoid chasing sudden spikes, and prefer signals that are stable over several weeks." rows={4}/><div className="prompt-helper"><Sparkles size={13}/> Be specific about the market behavior, holding horizon, and what you want to avoid. Daily OHLCV data only unless the engine supports more.</div></div>
-            <div className="idea-prompt-actions"><button className="btn btn-primary" onClick={generateIdeas} disabled={generatingIdeas}>{generatingIdeas?<RefreshCw className="spin" size={15}/>:<Sparkles size={15}/>}{generatingIdeas?"Generating ideas…":"Generate alpha ideas"}</button><small>Powered by Gemini · API key stays on the backend</small><button className="btn btn-quiet" onClick={()=>setStrategyPrompt("Find stocks with persistent 20-day momentum, but reduce the score when recent volatility is unusually high. I want a daily cross-sectional long/short strategy using only price and volume data.")}>Use example prompt</button></div>
+            <div className="idea-prompt-actions"><button className="btn btn-primary" onClick={generateIdeas} disabled={generatingIdeas}>{generatingIdeas?<RefreshCw className="spin" size={15}/>:<Sparkles size={15}/>}{generatingIdeas?"Generating ideas…":"Generate alpha ideas"}</button><small>Powered by LLM /small><button className="btn btn-quiet" onClick={()=>setStrategyPrompt("Find stocks with persistent 20-day momentum, but reduce the score when recent volatility is unusually high. I want a daily cross-sectional long/short strategy using only price and volume data.")}>Use example prompt</button></div>
           </div>
           {generationNote && <div className={`generation-note ${generatedIdeas.length ? "success-note" : "error-note"}`}>{generationNote}</div>}
           {generationOptimization && <div className="generation-note success-note"><strong>Prompt optimization:</strong> {generationOptimization.compression_used ? "Long prompt compressed" : "Compression skipped"} · ~{generationOptimization.original_input_tokens_est} original input tokens · ~{generationOptimization.final_prompt_tokens_est} final prompt tokens · {generationOptimization.context_fields_count}/{generationOptimization.context_fields_available} fields included{generationOptimization.compression_elapsed_s ? ` · compression ${generationOptimization.compression_elapsed_s}s` : ""}. Estimates only; check provider usage for exact billing.</div>}
