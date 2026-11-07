@@ -25,7 +25,7 @@ except Exception as exc:
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 256 * 1024
-CORS(app, resources={r"/api/*": {"origins": os.getenv("CORS_ORIGINS", "*").split(",")}})
+CORS(app, resources={r"/api/*": {"origins": os.getenv("CORS_ORIGINS", "https://unified-backtester-0906.onrender.com").split(",")}})
 
 def num(v):
     try:
